@@ -1,5 +1,5 @@
 Pipfile
 data/
-response
-summary
+response.json
+summary.png
 headers.csv
