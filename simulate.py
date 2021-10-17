@@ -10,7 +10,7 @@ capital = 1000 # EUR
 linearApproximationStrategy = LinearApproximationStrategy(capital)
 sellWhenReturnIs10EurStrategy = SellWhenReturnIs10EurStrategy(capital)
 
-strategies = Strategies([linearApproximationStrategy, sellWhenReturnIs10EurStrategy])
+strategies = Strategies([sellWhenReturnIs10EurStrategy])
 simulation = Simulation(strategies)
 
 simulation.run(ds)

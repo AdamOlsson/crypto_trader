@@ -9,7 +9,7 @@ ds = DataSeries1m()
 
 capital = 1000 # EUR
 strats = []
-for i in range(70):
+for i in range(50):
     window_size   = randint(1,60)
     k_thresh_buy  = randint(-10, 10)
     k_thresh_sell = randint(-10,10)
@@ -26,7 +26,7 @@ capital = simulation.run(ds)
 
 capital = np.array(capital)
 
-n = 2
+n = 3
 
 indices = (-capital).argsort()[:n]
 

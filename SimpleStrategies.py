@@ -31,7 +31,7 @@ class SellWhenReturnIs10EurStrategyV2(StrategyInterface):
 
     def step(self, datapoint):
         StrategyInterface.step(self, datapoint)
-        limit_price_eur = datapoint["Close"]
+        limit_price_eur = datapoint["Open"]
 
         delta_close = limit_price_eur - self.prev_close 
 
@@ -79,7 +79,7 @@ class SellWhenReturnIs10EurStrategy(StrategyInterface):
 
     def step(self, datapoint):
         StrategyInterface.step(self, datapoint)
-        limit_price_eur = datapoint["Close"]
+        limit_price_eur = datapoint["Open"]
 
         if not self.in_trade and self.should_buy_at(limit_price_eur):
             self.buy(limit_price_eur)
@@ -110,7 +110,7 @@ class DumbStrategy(StrategyInterface):
         self.in_trade = False
 
     def step(self, datapoint):
-        limit_price_eur = datapoint["Close"]
+        limit_price_eur = datapoint["Open"]
 
         if not self.in_trade:
             crypto = self.buy(limit_price_eur)
