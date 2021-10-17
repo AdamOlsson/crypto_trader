@@ -3,9 +3,10 @@ from Strategies import Strategies
 import numpy as np
 
 class Simulation:
-    top_n_to_display = 3
     def __init__(self, strategies: Strategies):
         self.strategies = strategies
+        self.top_n_to_display = min(3, len(self.strategies))
+
         self.capital_format = "{:>20} EUR, " * self.top_n_to_display
         self.step_print_format = "[{:>5}/{:>5}] {} Top {} capital: " + self.capital_format
 
