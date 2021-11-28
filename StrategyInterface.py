@@ -14,11 +14,14 @@ class StrategyInterface:
         self.return_from_sell = 0
         self.monthly_earning_dict = {}
         self.all_time_high = 0
-        self.all_time_high_history = [] # TODO: These lists needs to be removed before going live to prevent running out of memory
+        self.all_time_high_history = []
         self.starting_capital = starting_capital
         self.in_trade = False
         self.logger = logger
         self.system_is_live = system_is_live
+        self.history_buy = []
+        self.history_sell = []
+        self.step_count = 0
 
 
     def step(self, datapoint) -> float:
@@ -35,6 +38,7 @@ class StrategyInterface:
         self.all_time_high = max(self.all_time_high, limit_price_eur)
 
         if not self.system_is_live:
+            self.step_count += 1
             self.price_history.append(limit_price_eur)
             self.all_time_high_history.append(self.all_time_high)
 
@@ -56,6 +60,9 @@ class StrategyInterface:
 
         if self.logger != None:
             self.logger.log_buy(datapoint, self.crypto)
+        
+        if not self.system_is_live:
+            self.history_buy.append((self.step_count, price))
 
         return self.crypto
 
@@ -80,6 +87,7 @@ class StrategyInterface:
 
         if not self.system_is_live:
             self.capital_history.append(self.capital)
+            self.history_sell.append((self.step_count, price))
 
         if self.logger != None:
             self.logger.log_sell(datapoint, self.capital)
@@ -112,6 +120,13 @@ class StrategyInterface:
 
         plt.plot(self.all_time_high_history, label="All time high")
         plt.plot(self.price_history, label="Close")
+
+        steps, buy_price = list(zip(*self.history_buy))
+        plt.scatter(steps, buy_price, c="green")
+
+        steps, sell_price = list(zip(*self.history_sell))
+        plt.scatter(steps, sell_price, c="red")
+
         plt.legend()
         plt.ylabel("Capital (EUR)")
         plt.xlabel("Steps")

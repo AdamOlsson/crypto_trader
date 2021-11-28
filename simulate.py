@@ -5,7 +5,7 @@ from Simulation import Simulation
 from Strategies import Strategies
 
 ds = DataSeries1m()
-# ds = DataSeries1mETHEUR()
+#ds = DataSeries1mETHEUR()
 
 capital = 1000 # EUR
 linearApproximationStrategy = LinearApproximationStrategy(capital)
