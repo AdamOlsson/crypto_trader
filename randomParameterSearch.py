@@ -1,5 +1,6 @@
 from DataSeries import DataSeries1m
 from ApproximationStrategies import LinearApproximationStrategy
+from SimpleStrategies import SellWhenReturnIs10EurStrategy
 from Simulation import Simulation
 from Strategies import Strategies
 from random import randint
@@ -9,15 +10,15 @@ ds = DataSeries1m()
 
 capital = 1000 # EUR
 strats = []
-for i in range(50):
-    window_size   = randint(1,60)
-    k_thresh_buy  = randint(-10, 10)
-    k_thresh_sell = randint(-10,10)
-    strats.append(LinearApproximationStrategy(
-        capital,
-        window_size=window_size,
-        k_thresh_buy=k_thresh_buy,
-        k_thresh_sell=k_thresh_sell))
+window_sizes = [15, 60, 60*2, 60*24, 60*24*2, 60*24,60*24*7] # minutes
+denoms = [i for i in range(1,10)]
+for w in window_sizes:
+    for d in denoms:
+        strats.append(SellWhenReturnIs10EurStrategy(
+            capital,
+            window_size=w,
+            denominator=d
+            ))
 
 strategies = Strategies(strats)
 simulation = Simulation(strategies)

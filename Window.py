@@ -5,14 +5,21 @@ class Window:
         self.size = size
         self.window = []
         self._is_full = False
+        self.local_min = self.local_max = 0
     
     def add(self, point):
         if len(self.window) < self.size:
             self.window.append(point)
             self._is_full = len(self.window) == self.size
+            # set first point to be local max and min
+            if len(self.window) == 1:
+                self.local_min = self.local_max = point
         else:
             del self.window[0]
             self.window.append(point)
+
+        self.local_min = min(point, self.local_min)
+        self.local_max = max(point, self.local_max)
 
     def __len__(self):
         return len(self.window)

@@ -44,6 +44,8 @@ class DataSeries1m(DataSeries):
     def __init__(self):
         super().__init__(self.data_path)
 
-
-
-        
+class DataSeries1mETHEUR(DataSeries):
+    data_path = "data/ETHEUR_1min_2021-10-01_to_2021-10-29"
+    def __init__(self):
+        super().__init__(self.data_path)
+    
