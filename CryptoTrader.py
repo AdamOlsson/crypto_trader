@@ -27,7 +27,7 @@ class CryptoTrader():
         while True:
             try: # try-catch clause for stub
                 kline_data = self.binance_interface.get()
-            except IndentationError:
+            except IndexError:
                 break
         
             server_time_s = int(self.binance_interface.get_server_time()/1000)

@@ -1,4 +1,4 @@
-from StrategyInterface import StrategyInterface
+from Strategies.StrategyInterface import StrategyInterface
 from Window import Window
 from util import linear_approximation
 

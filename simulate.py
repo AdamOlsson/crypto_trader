@@ -1,6 +1,6 @@
 from DataSeries import DataSeries15m, DataSeries1m, DataSeries1mETHEUR
-from SimpleStrategies import DumbStrategy, SellWhenReturnIs10EurStrategy, SellWhenReturnIs10EurStrategyV2
-from ApproximationStrategies import LinearApproximationStrategy
+from Strategies.SimpleStrategies import DumbStrategy, SellWhenReturnIs10EurStrategy, SellWhenReturnIs10EurStrategyV2
+from Strategies.ApproximationStrategies import LinearApproximationStrategy
 from Simulation import Simulation
 from Strategies import Strategies
 

@@ -1,4 +1,4 @@
-from StrategyInterface import StrategyInterface
+from Strategies.StrategyInterface import StrategyInterface
 
 class Strategies(StrategyInterface):
     def __init__(self, strategies):

@@ -1,6 +1,6 @@
 from CryptoTrader import CryptoTrader
 from BinanceInterface import BinanceInterface, BinanceInterfaceStub
-from SimpleStrategies import SellWhenReturnIs10EurStrategy
+from Strategies.SimpleStrategies import SellWhenReturnIs10EurStrategy
 from Logger import Logger
 from binance.spot import Spot
 

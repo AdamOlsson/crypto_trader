@@ -1,7 +1,5 @@
 # Create an interface and inherit
-import time
 from DataSeries import DataSeries1m
-
 
 class BinanceInterface():
     def __init__(self, symbol, interval, spot):
@@ -60,8 +58,8 @@ class BinanceInterfaceStub():
         ]}
 
     def get(self):
-        ret = self.data_series[self.i]
         self.i +=1
+        ret = self.data_series[self.i]
         return ret
 
     def get_server_time(self):

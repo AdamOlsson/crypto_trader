@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from datetime import datetime
-from StrategyInterface import StrategyInterface
+from Strategies.StrategyInterface import StrategyInterface
 from Window import Window
 
 class SellWhenReturnIs10EurStrategy(StrategyInterface):
