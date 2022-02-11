@@ -12,12 +12,14 @@ class SellWhenReturnIs10EurStrategy(StrategyInterface):
     sell_thresh = 10
     all_time_high_threshold = 100
 
-    def __init__(self, starting_capital, window_size=15, denominator=2, logger=None, system_is_live=True):
+    def __init__(self, starting_capital, window_size=15, denominator=2, logger=None, system_is_live=True, binance_interface=None):
         super().__init__(starting_capital, logger, system_is_live=system_is_live)
         self.buy_price = None
         self.window_size = window_size
         self.window = Window(self.window_size)
         self.denominator = denominator
+        self.in_trade = False
+        self.binance_interface = binance_interface
 
     def should_buy_at(self, price):
         local_min = self.window.local_min
@@ -29,24 +31,27 @@ class SellWhenReturnIs10EurStrategy(StrategyInterface):
 
     def should_sell_at(self, price):
         # only sell if gain is 10EUR
-        sell_value = price*self.crypto
+        crypto = self.binance_interface.get_asset_balance("BTC")
+        sell_value = price*crypto
         sell_value -= self.compute_fee(sell_value) # remove fee
-        buy_value = self.buy_price*self.crypto
+        buy_value = self.buy_price*crypto
         return sell_value - buy_value > self.sell_thresh
 
-    def step(self, datapoint):
-        StrategyInterface.step(self, datapoint)
-        limit_price_eur = datapoint["Open"]
-        self.window.add(limit_price_eur)
+    def step(self, kline_data):
+        StrategyInterface.step(self, kline_data)
+        open_price = kline_data["Open"]
+        self.window.add(open_price)
 
-        if not self.get_in_trade() and self.should_buy_at(limit_price_eur):
-            self.buy(datapoint)
-            self.buy_price = limit_price_eur
-        elif self.get_in_trade() and self.should_sell_at(limit_price_eur):
-            self.sell(datapoint)
+        if not self.get_in_trade() and self.should_buy_at(open_price):
+            self.buy_price = open_price
+            self.in_trade = True
+            return "BUY"
+        elif self.get_in_trade() and self.should_sell_at(open_price):
             self.buy_price = None
+            self.in_trade = False
+            return "SELL"
 
-        return self.get_capital()
+        return "HOLD"
 
 
     def summary(self):
