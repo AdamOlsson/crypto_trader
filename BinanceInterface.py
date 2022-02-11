@@ -38,9 +38,9 @@ class BinanceInterface():
             symbol = asset["asset"]
             assets[symbol] = asset
 
-        price = self.binance_interface.get()["Close"] # get closing price of crypto
+        price = self.get()["Close"] # get closing price of crypto
 
-        capital = self.assets["EUR"]["free"] + self.assets["BTC"]["free"]*price
+        capital = float(assets["EUR"]["free"]) + float(assets["BTC"]["free"])*price
 
         return capital
 

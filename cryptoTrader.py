@@ -14,12 +14,14 @@ def getKeys():
 api_key, secret_key = getKeys()
 spot = Spot(key=api_key, secret=secret_key)
 
-capital = 1700
 binance_interface = BinanceInterface("BTCEUR", "1m", spot)
+capital = binance_interface.get_capital()
 binance_interface_stub = BinanceInterfaceStub(capital)
 
-logger = Logger("./logs")
-strategy = SellWhenReturnIs10EurStrategy(capital, logger=logger, binance_interface=binance_interface_stub)
+bi = binance_interface_stub
 
-trader = CryptoTrader(strategy, binance_interface_stub)
+logger = Logger("./logs")
+strategy = SellWhenReturnIs10EurStrategy(capital, logger=logger, binance_interface=bi)
+
+trader = CryptoTrader(strategy, bi)
 trader.run()
