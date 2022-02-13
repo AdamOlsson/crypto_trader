@@ -18,7 +18,7 @@ binance_interface = BinanceInterface("BTCEUR", "1m", spot)
 capital = binance_interface.get_capital()
 binance_interface_stub = BinanceInterfaceStub(capital)
 
-bi = binance_interface_stub
+bi = binance_interface
 
 logger = Logger("./logs")
 strategy = SellWhenReturnIs10EurStrategy(capital, logger=logger, binance_interface=bi)

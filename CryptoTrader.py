@@ -1,7 +1,7 @@
 import datetime, time, sys, signal
 
 class CryptoTrader():
-    terminal_status_print_format = "LocalTime {},ServerTime: {},Capital: {}EUR,Earnings from start: {},In trade: {}"
+    terminal_status_print_format = "LocalTime {},ServerTime: {},Capital: {}EUR,Earnings from start: {},In trade: {}         "
     
     def __init__(self, strategy, binance_interface, logger=None):
         self.strategy = strategy
@@ -37,11 +37,17 @@ class CryptoTrader():
             # TODO: Implement an emergency exit
 
             if action == "BUY":
-                self.binance_interface.buy()
+                ack = self.binance_interface.buy()
             elif action == "SELL":
-                self.binance_interface.sell()
+                ack = self.binance_interface.sell()
             else: #"HOLD"
                 pass # do nothing
+
+            # Logging
+            if bool(ack) and (action == "BUY" or action == "SELL"):
+                orderId = ack["orderId"]
+                order = self.binance_interface.getOrder(orderId)
+                self.logger.log(order)
 
             capital = self.binance_interface.get_capital()
             show_status_terminal(
@@ -52,7 +58,7 @@ class CryptoTrader():
             # TODO: Move this wait to some kind of engine
             # Always fetch data 10s after full minute
             sleep_time = 69 - local_time.second
-            #time.sleep(sleep_time)
+            time.sleep(sleep_time)
 
             if self.g_keyboard_interrupt_signal:
                 break

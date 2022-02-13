@@ -17,18 +17,43 @@ class BinanceInterface():
     def get_client_info(self):
         return self.spot.account()
 
+    def get_asset_balance(self, symbol):
+        balances = self.spot.account()["balances"]
+        for asset in balances:
+            if symbol == asset["asset"]:
+                return float(asset["free"])
+
     def buy(self):
-        symbol = "BTCEUR"
-        side = "BUY"
-        type = "LIMIT"
-        ack = self.spot.new_order_test(symbol, side, type)
+
+        price = self.get()["Close"]
+        eur_balance = self.get_asset_balance("EUR")
+        quantity = eur_balance/price
+
+        params = {
+            'symbol': 'BTCEUR',
+            'side': 'BUY',
+            'type': 'LIMIT',
+            'timeInForce': 'GTC',
+            'quantity': '%.4f' % quantity,
+            'price': price
+        }
+        ack = self.spot.new_order_test(**params)
         return ack
 
     def sell(self):
-        symbol = "BTCEUR"
-        side = "SELL"
-        type = "LIMIT"
-        ack = self.spot.new_order_test(symbol, side, type)
+        
+        price = self.get()["Close"]
+        btc_balance = self.get_asset_balance("BTC")
+
+        params = {
+            'symbol': 'BTCEUR',
+            'side': 'SELL',
+            'type': 'LIMIT',
+            'timeInForce': 'GTC',
+            'quantity': '%.4f' % btc_balance,
+            'price': price
+        }        
+        ack = self.spot.new_order_test(**params)
         return ack
 
     def get_capital(self):
@@ -43,6 +68,15 @@ class BinanceInterface():
         capital = float(assets["EUR"]["free"]) + float(assets["BTC"]["free"])*price
 
         return capital
+
+    def getOrder(self, orderId):
+        params = {
+            'symbol': 'BTCEUR',
+            'orderId': orderId
+            # 'timestamp': transactTime
+        }
+        order = self.spot.get_order(**params)
+        return order
 
 
 class BinanceInterfaceStub():
