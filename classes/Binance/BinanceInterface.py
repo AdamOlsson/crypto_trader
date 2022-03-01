@@ -1,5 +1,3 @@
-# Create an interface and inherit
-from DataSeries import DataSeries1m
 
 class BinanceInterface():
     def __init__(self, symbol, interval, spot):
@@ -8,8 +6,11 @@ class BinanceInterface():
         self.spot = spot
 
     def get(self):
-        res = self.spot.klines(self.symbol, self.interval, limit=1)[-1]
-        return {"Open time":res[0],"Open":float(res[1]),"High":float(res[2]),"Low":float(res[3]),"Close":float(res[4]),"Close time":res[6]}
+        try:
+            res = self.spot.klines(self.symbol, self.interval, limit=1)[-1]
+            return {"Open time":res[0],"Open":float(res[1]),"High":float(res[2]),"Low":float(res[3]),"Close":float(res[4]),"Close time":res[6]}
+        except:
+            return {}
 
     def get_server_time(self):
         return self.spot.time()["serverTime"] # milliseconds
@@ -25,38 +26,51 @@ class BinanceInterface():
 
     def buy(self):
 
-        price = self.get()["Close"]
+        kline_data = self.get()
+        
+        if not bool(kline_data):
+            pass #error handling
+
+        closing_price = kline_data["Close"]
         eur_balance = self.get_asset_balance("EUR")
-        quantity = eur_balance/price
+        quantity = eur_balance/price - 0.0002 # margin for price variations
 
         params = {
-            'symbol': 'BTCEUR',
+            'symbol': self.symbol,
             'side': 'BUY',
             'type': 'LIMIT',
             'timeInForce': 'GTC',
             'quantity': '%.4f' % quantity,
             'price': price
         }
-        ack = self.spot.new_order_test(**params)
+        try:
+            ack = self.spot.new_order(**params)
+        except:
+            self.spot.cancel_open_orders(self.symbol)
+
         return ack
 
-    def sell(self):
+    def sell(self, asset):
         
         price = self.get()["Close"]
-        btc_balance = self.get_asset_balance("BTC")
+        asset_balance = self.get_asset_balance(asset)
 
         params = {
-            'symbol': 'BTCEUR',
+            'symbol': self.symbol,
             'side': 'SELL',
             'type': 'LIMIT',
             'timeInForce': 'GTC',
-            'quantity': '%.4f' % btc_balance,
+            'quantity': '%.4f' % asset_balance,
             'price': price
-        }        
-        ack = self.spot.new_order_test(**params)
+        }
+        try:
+            ack = self.spot.new_order(**params)
+        except:
+            self.spot.cancel_open_orders(self.symbol)
+
         return ack
 
-    def get_capital(self):
+    def get_capital(self, target_asset):
         balances = self.spot.account()["balances"]
         assets = {}
         for asset in balances:
@@ -65,13 +79,13 @@ class BinanceInterface():
 
         price = self.get()["Close"] # get closing price of crypto
 
-        capital = float(assets["EUR"]["free"]) + float(assets["BTC"]["free"])*price
+        capital = float(assets["EUR"]["free"]) + float(assets[target_asset]["free"])*price
 
         return capital
 
     def getOrder(self, orderId):
         params = {
-            'symbol': 'BTCEUR',
+            'symbol': self.symbol,
             'orderId': orderId
             # 'timestamp': transactTime
         }
@@ -81,13 +95,14 @@ class BinanceInterface():
 
 class BinanceInterfaceStub():
     maker_fee = taker_fee = 1/(100 * 10) # 0.1%
-    def __init__(self, starting_capital):
-        self.data_series = DataSeries1m()
+    def __init__(self, starting_capital, data_series):
+        self.data_series = data_series
 
         self.i = 0
         self.starting_capital = starting_capital
         self.balances = {"balances": [
             {"asset": "BTC", "free": "0.00000000",               "locked": "0.00000000"},
+            {"asset": "ETH", "free": "0.00000000",               "locked": "0.00000000"},
             {"asset": "EUR", "free": str(self.starting_capital), "locked": "0.00000000"}
         ]}
 
@@ -121,7 +136,7 @@ class BinanceInterfaceStub():
             if symbol == asset["asset"]:
                 return float(asset["free"])
 
-    def get_capital(self):
+    def get_capital(self, target_asset):
         balances = self.balances["balances"]
         assets = {}
         for asset in balances:
@@ -129,7 +144,7 @@ class BinanceInterfaceStub():
             assets[symbol] = asset
 
         price = self._get_current()["Close"] # get closing price of crypto
-        capital = float(assets["EUR"]["free"]) + float(assets["BTC"]["free"])*price
+        capital = float(assets["EUR"]["free"]) + float(assets[target_asset]["free"])*price
 
         return capital
 
@@ -147,8 +162,8 @@ class BinanceInterfaceStub():
         fee_eur = self.compute_fee(eur)
         crypto = (eur - fee_eur)/price
 
-        self.set_asset_balance("BTC", crypto)
-        self.set_asset_balance("EUR", 0)
+        self.set_asset_balance("BTC", crypto) # TODO Will not work
+        self.set_asset_balance("EUR", 0)      # TODO Will not work
 
         return {}
 

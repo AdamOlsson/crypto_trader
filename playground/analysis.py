@@ -1,5 +1,5 @@
-from Window import Window
-from DataSeries import DataSeries1m
+from class.Window import Window
+from class.DataSeries import DataSeries1m
 
 import matplotlib.pyplot as plt
 import numpy as np

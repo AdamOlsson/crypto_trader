@@ -1,6 +1,6 @@
 
 
-class cryptoTraderAssets:
+class CryptoTraderAssets:
     def __init__(self, binance_interface):
         self.binance_interface = binance_interface
         self.assets = {}

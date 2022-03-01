@@ -1,7 +1,9 @@
-from CryptoTrader import CryptoTrader
-from BinanceInterface import BinanceInterface, BinanceInterfaceStub
-from Strategies.SimpleStrategies import SellWhenReturnIs10EurStrategy
-from Logger import Logger
+from classes.CryptoTrader import CryptoTrader
+from classes.CryptoTrader import CryptoTrader
+from classes.Binance.BinanceInterface import BinanceInterface, BinanceInterfaceStub
+from classes.DataSeries import DataSeries1m
+from classes.Strategies.SimpleStrategies import SellWhenReturnIs10EurStrategy
+from classes.Logger import Logger
 from binance.spot import Spot
 
 def getKeys():
@@ -13,15 +15,19 @@ def getKeys():
 
 api_key, secret_key = getKeys()
 spot = Spot(key=api_key, secret=secret_key)
+symbol = "ETHEUR"
+asset = "ETH"
 
-binance_interface = BinanceInterface("BTCEUR", "1m", spot)
-capital = binance_interface.get_capital()
-binance_interface_stub = BinanceInterfaceStub(capital)
+binance_interface = BinanceInterface(symbol, "1m", spot)
+capital = binance_interface.get_capital(asset)
+
+data_series = DataSeries1m()
+binance_interface_stub = BinanceInterfaceStub(capital, data_series)
 
 bi = binance_interface
 
 logger = Logger("./logs")
-strategy = SellWhenReturnIs10EurStrategy(capital, logger=logger, binance_interface=bi)
+strategy = SellWhenReturnIs10EurStrategy(capital, binance_interface=bi)
 
-trader = CryptoTrader(strategy, bi)
+trader = CryptoTrader(strategy, bi, asset, logger=logger)
 trader.run()

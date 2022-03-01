@@ -1,5 +1,5 @@
 from datetime import datetime
-from Strategies import Strategies
+from Strategies.Strategies import Strategies
 import numpy as np
 
 class Simulation:

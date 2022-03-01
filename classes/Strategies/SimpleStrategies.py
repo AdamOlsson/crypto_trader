@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from datetime import datetime
-from Strategies.StrategyInterface import StrategyInterface
-from Window import Window
+from classes.Strategies.StrategyInterface import StrategyInterface
+from classes.Strategies.Window import Window
 
 class SellWhenReturnIs10EurStrategy(StrategyInterface):
     # This strategy will buy crypto for the full capital and only sell
@@ -9,7 +9,7 @@ class SellWhenReturnIs10EurStrategy(StrategyInterface):
     # crypto is at all time high, it avoid buying until its 100EUR
     # below.
 
-    sell_thresh = 10
+    sell_thresh = 5 #EUR
     all_time_high_threshold = 100
 
     def __init__(self, starting_capital, window_size=15, denominator=2, logger=None, system_is_live=True, binance_interface=None):

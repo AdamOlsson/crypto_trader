@@ -1,5 +1,5 @@
 from datetime import datetime
-import time
+import json
 
 class Logger():
     log_header = "#LocalTime,OpenTime,Action,Price,AmountCrypto,AmountEUR"
@@ -11,4 +11,4 @@ class Logger():
 
     def log(self, order):
         with open(self.log_file, "a") as f:
-            f.write(order + "\n")
+            f.write(json.dumps(order) + "\n")

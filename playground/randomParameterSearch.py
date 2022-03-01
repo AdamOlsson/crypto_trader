@@ -1,8 +1,8 @@
-from DataSeries import DataSeries1m
+from class.DataSeries import DataSeries1m
 from Strategies.ApproximationStrategies import LinearApproximationStrategy
 from Strategies.SimpleStrategies import SellWhenReturnIs10EurStrategy
-from Simulation import Simulation
-from Strategies import Strategies
+from class.Simulation import Simulation
+from class.Strategies.Strategies import Strategies
 from random import randint
 import numpy as np
 

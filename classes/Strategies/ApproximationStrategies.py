@@ -1,5 +1,5 @@
 from Strategies.StrategyInterface import StrategyInterface
-from Window import Window
+from class.Window import Window
 from util import linear_approximation
 
 class LinearApproximationStrategy(StrategyInterface):

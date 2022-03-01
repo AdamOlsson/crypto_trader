@@ -1,12 +1,13 @@
-import datetime, time, sys, signal
+import datetime, time, signal
 
 class CryptoTrader():
     terminal_status_print_format = "LocalTime {},ServerTime: {},Capital: {}EUR,Earnings from start: {},In trade: {}         "
     
-    def __init__(self, strategy, binance_interface, logger=None):
+    def __init__(self, strategy, binance_interface, asset, logger=None):
         self.strategy = strategy
         self.binance_interface = binance_interface
         self.logger = logger
+        self.asset = asset
 
     def run(self):
         def show_status_terminal(local_time, server_time_s, capital, earnings, in_trade):
@@ -39,7 +40,7 @@ class CryptoTrader():
             if action == "BUY":
                 ack = self.binance_interface.buy()
             elif action == "SELL":
-                ack = self.binance_interface.sell()
+                ack = self.binance_interface.sell(self.asset)
             else: #"HOLD"
                 pass # do nothing
 
@@ -49,7 +50,7 @@ class CryptoTrader():
                 order = self.binance_interface.getOrder(orderId)
                 self.logger.log(order)
 
-            capital = self.binance_interface.get_capital()
+            capital = self.binance_interface.get_capital(self.asset)
             show_status_terminal(
                 local_time, server_time_s,
                 capital,capital - self.strategy.starting_capital,

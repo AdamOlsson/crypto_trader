@@ -1,8 +1,8 @@
-from DataSeries import DataSeries15m, DataSeries1m, DataSeries1mETHEUR
+from class.DataSeries import DataSeries15m, DataSeries1m, DataSeries1mETHEUR
 from Strategies.SimpleStrategies import DumbStrategy, SellWhenReturnIs10EurStrategy, SellWhenReturnIs10EurStrategyV2
 from Strategies.ApproximationStrategies import LinearApproximationStrategy
-from Simulation import Simulation
-from Strategies import Strategies
+from class.Simulation import Simulation
+from class.Strategies.Strategies import Strategies
 
 ds = DataSeries1m()
 #ds = DataSeries1mETHEUR()
