@@ -37,7 +37,8 @@ class SellWhenReturnIs10EurStrategy(StrategyInterface):
         buy_value = self.buy_price*crypto
         return sell_value - buy_value > self.sell_thresh
 
-    def step(self, kline_data):
+    def step(self):
+        kline_data = self.binance_interface.get()
         StrategyInterface.step(self, kline_data)
         open_price = kline_data["Open"]
         self.window.add(open_price)

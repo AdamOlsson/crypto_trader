@@ -1,4 +1,7 @@
 
+import math
+
+
 class BinanceInterface():
     def __init__(self, symbol, interval, spot):
         self.symbol = symbol
@@ -33,7 +36,7 @@ class BinanceInterface():
 
         closing_price = kline_data["Close"]
         eur_balance = self.get_asset_balance("EUR")
-        quantity = eur_balance/price - 0.0002 # margin for price variations
+        quantity = eur_balance/closing_price - 0.0002 # margin for price variations
 
         params = {
             'symbol': self.symbol,
@@ -41,7 +44,7 @@ class BinanceInterface():
             'type': 'LIMIT',
             'timeInForce': 'GTC',
             'quantity': '%.4f' % quantity,
-            'price': price
+            'price': closing_price
         }
         try:
             ack = self.spot.new_order(**params)
@@ -49,6 +52,9 @@ class BinanceInterface():
             self.spot.cancel_open_orders(self.symbol)
 
         return ack
+
+    def truncate(self, f, n):
+        return math.floor(f * 10 ** n) / 10 ** n
 
     def sell(self, asset):
         
@@ -60,9 +66,10 @@ class BinanceInterface():
             'side': 'SELL',
             'type': 'LIMIT',
             'timeInForce': 'GTC',
-            'quantity': '%.4f' % asset_balance,
+            'quantity': self.truncate(asset_balance, 4),
             'price': price
         }
+
         try:
             ack = self.spot.new_order(**params)
         except:
